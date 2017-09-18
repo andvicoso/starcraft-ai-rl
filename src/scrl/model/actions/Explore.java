@@ -15,9 +15,12 @@ public class Explore extends Action implements java.io.Serializable {
 
 	// Executor da acao
 	@Override
-	public void execute(Game game, Unit unit) {
-		Position exploreLocation = getExploreLocation(game, unit); // escolhe lugar para exploração
-		unit.move(exploreLocation, false);
+	public void execute(Game game) {
+		List<Unit> units = game.self().getUnits();
+		for (Unit unit : units) {
+			Position exploreLocation = getExploreLocation(game, unit); // escolhe lugar para exploração
+			unit.move(exploreLocation, false);
+		}
 	}
 
 	// ( OBJETIVA-SE MANTER CLUSTERS de UNIDADES ALIADAS)

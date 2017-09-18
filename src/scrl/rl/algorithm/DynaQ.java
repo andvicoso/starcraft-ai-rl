@@ -5,10 +5,10 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import scrl.Main;
 import scrl.model.SCMDP;
 import scrl.model.State;
 import scrl.model.actions.Action;
-import scrl.tests.Main;
 import scrl.utils.CollectionsUtils;
 
 public class DynaQ extends QLearning {

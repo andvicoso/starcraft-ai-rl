@@ -6,10 +6,9 @@ import java.util.List;
 import java.util.Set;
 
 import scrl.model.actions.Action;
-import scrl.model.actions.Attack;
-import scrl.model.actions.Explore;
-import scrl.model.actions.Flee;
-import scrl.model.range.RangeDistance;
+import scrl.model.actions.AttackLowestHP;
+import scrl.model.actions.ExploreCentroid;
+import scrl.model.actions.FleeCentroid;
 import scrl.model.range.RangeHP;
 import scrl.model.range.RangeUnits;
 
@@ -29,11 +28,8 @@ public class SCMDP {
 			for (RangeUnits numberOfEnemiesUnitsNearby : RangeUnits.values()) {
 				for (RangeHP hpFromNearbyAllies : RangeHP.values()) {
 					for (RangeUnits numberOfAlliesUnitsNearby : RangeUnits.values()) {
-						for (RangeDistance dist : RangeDistance.values()) {
-							State newUnit = new State(mediumHpFromNearbyEnemies, numberOfEnemiesUnitsNearby,
-									hpFromNearbyAllies, numberOfAlliesUnitsNearby, dist);
-							sts.add(newUnit);
-						}
+						State newUnit = new State(mediumHpFromNearbyEnemies, numberOfEnemiesUnitsNearby, hpFromNearbyAllies, numberOfAlliesUnitsNearby);
+						sts.add(newUnit);
 					}
 				}
 			}
@@ -43,7 +39,8 @@ public class SCMDP {
 
 	// cria a relacao de acoes possiveis
 	public static final List<Action> getValidActions() {
-		return Arrays.asList(new Explore(), new Flee(), new Attack());
+		return Arrays.asList(new ExploreCentroid(), new FleeCentroid(), new AttackLowestHP());
+		// return Arrays.asList(new Explore(), new Flee(), new Attack());
 	}
 
 	public Set<State> getStates() {

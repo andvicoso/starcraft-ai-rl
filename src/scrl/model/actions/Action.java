@@ -1,11 +1,14 @@
 package scrl.model.actions;
 
 import bwapi.Game;
-import bwapi.Unit;
 
 public abstract class Action {
 
-	public abstract void execute(Game game, Unit unit);
+	public abstract void execute(Game game);
+
+	public int getNumberOfFrames(Game game) {
+		return 12;
+	}
 
 	public abstract boolean equals(Object other);
 

@@ -2,9 +2,9 @@ package scrl.model.function;
 
 import scrl.model.State;
 import scrl.model.actions.Action;
-import scrl.model.actions.Attack;
-import scrl.model.actions.Explore;
-import scrl.model.actions.Flee;
+import scrl.model.actions.AttackLowestHP;
+import scrl.model.actions.ExploreCentroid;
+import scrl.model.actions.FleeCentroid;
 
 // FUNCAO DE CALCULO DE RECOMPENSA
 public class RewardFunction {
@@ -13,52 +13,41 @@ public class RewardFunction {
 	public static double getValue(final State state, State next, final Action action) {
 		double diffAlliesUnits;
 		double diffEnemyUnits;
-		boolean noEnemiesNearby;
-		noEnemiesNearby = state.getHpFromNearbyEnemies().getValue() == 0;
-		
-		// se acao escolhida for atacar
-		if (action instanceof Attack) {
+		boolean noEnemiesNearby = state.getHpFromNearbyEnemies().getValue() == 0;
+		boolean noEnemiesNearbyNext = next.getHpFromNearbyEnemies().getValue() == 0;
+
+		if (action instanceof AttackLowestHP) {
 			// se nao tem nenhum inimigo por perto
 			if (noEnemiesNearby) {
-				return -DEFAULT_REWARD; // recompensa padrao negativa
+				return -DEFAULT_REWARD;
 			} else { // caso constrario, avaliar o dano da acao
 				diffAlliesUnits = (state.getNumberOfAlliesUnitsNearby().getValue() - next.getNumberOfAlliesUnitsNearby().getValue());
 				diffEnemyUnits = (state.getNumberOfEnemiesUnitsNearby().getValue() - next.getNumberOfEnemiesUnitsNearby().getValue());
-				
 				//
-				if(diffAlliesUnits>0 || diffEnemyUnits<0)
-				{ // Recompensa negativa
+				if (diffAlliesUnits > 0 || diffEnemyUnits < 0) {
 					return -hpDiff(state, next);
-				}else{
-					// Recompensa positiva
+				} else {
 					return hpDiff(state, next);
 				}
 			}
-			// se acao for explorar
-		} else if (action instanceof Explore) { 
-			return noEnemiesNearby ? DEFAULT_REWARD : -DEFAULT_REWARD ; // recompensa positiva caso nao haja unidades inimigas por perto, 
-			//ruim caso contrario
-			// se acao for fugir
-		} else if (action instanceof Flee) {
+		} else if (action instanceof ExploreCentroid) {
+			// recompensa positiva caso nao haja unidades inimigas por perto,
+			// ruim caso contrario
+			return noEnemiesNearby ? DEFAULT_REWARD / 100 : noEnemiesNearbyNext ? DEFAULT_REWARD : -DEFAULT_REWARD / 10;
+		} else if (action instanceof FleeCentroid) {
 			if (noEnemiesNearby) {
 				return -DEFAULT_REWARD; // recompensa negativa caso nao haja unidades inimigas por perto,
-				
-				// Caso existam inimigos 
+				// Caso existam inimigos
 			} else {
 				// VISANDO decidir se vale a pena fugir em uma dada situacao é
-
-				// 
-				if(state.getHpFromNearbyEnemies().getValue() > (1.5*state.getHpFromNearbyAllies().getValue()))
-				{
+				if (state.getHpFromNearbyEnemies().getValue() > (1.5 * state.getHpFromNearbyAllies().getValue())) {
 					// Se FLEE && a vida de meus inimigos for maior doq 1,5 Vezes a minha, recompensa ruim
-					// QUAL a ideia por tras disso ? 
+					// QUAL a ideia por tras disso ?
 					// Dar uma recompensa ruim pois talvez seja melhor "sacrificar" essas unidades
 					// em detrimento a que elas morram enquanto fogem
 					// Melhor que inflinjam algum dano do que apenas morrram correndo
 					return -DEFAULT_REWARD;
-				}
-				else
-				{
+				} else {
 					return DEFAULT_REWARD;
 				}
 
@@ -70,6 +59,7 @@ public class RewardFunction {
 	private static double hpDiff(final State state, State next) {
 		double diffAllies = (state.getHpFromNearbyAllies().getValue() - next.getHpFromNearbyAllies().getValue());
 		double diffEnemy = (state.getHpFromNearbyEnemies().getValue() - next.getHpFromNearbyEnemies().getValue());
-		return (diffEnemy - diffAllies) * DEFAULT_REWARD;
+		double val = (diffEnemy - diffAllies) * DEFAULT_REWARD;
+		return val == 0 ? DEFAULT_REWARD / 10 : val;
 	}
 }

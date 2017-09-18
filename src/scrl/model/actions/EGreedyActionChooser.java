@@ -9,7 +9,7 @@ import scrl.model.State;
 
 public class EGreedyActionChooser implements ActionChooser {
 	private Random rand = new Random();
-	private double epsilon = 0.2;
+	private double epsilon = 0.1;
 	private QTable qTable;
 
 	public EGreedyActionChooser(QTable qTable) {
@@ -23,6 +23,7 @@ public class EGreedyActionChooser implements ActionChooser {
 		// escolhe de forma randomica entre tentar nova acao ou usar a melhor
 		// acao atualmente conhecida
 		if (rnd < epsilon) {
+			// Log.log("random action");
 			List<Action> actions = SCMDP.getValidActions();
 			action = actions.get(rand.nextInt(actions.size()));
 		} else {

@@ -2,12 +2,15 @@ package scrl.utils;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -76,8 +79,7 @@ public abstract class FileUtils {
 		try {
 			PrintWriter qwriter = new PrintWriter("policy.txt", "UTF-8");
 			for (StateAction stateAction : policyDataList) {
-				qwriter.println(stateAction.getState().toCSV() + " : "
-						+ stateAction.getAction().getClass().getSimpleName());
+				qwriter.println(stateAction.getState().toCSV() + " : " + stateAction.getAction().getClass().getSimpleName());
 			}
 			qwriter.close();
 		} catch (IOException e) {
@@ -102,5 +104,31 @@ public abstract class FileUtils {
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static void statesSerialize(Map<State, Long> statesCounter) {
+		try {
+			FileOutputStream fos = new FileOutputStream("states.ser");
+			ObjectOutputStream oos = new ObjectOutputStream(fos);
+			oos.writeObject(statesCounter);
+			oos.close();
+			fos.close();
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+		}
+	}
+
+	public static Map<State, Long> deserializeStates() {
+		Map<State, Long> map = null;
+		try {
+			FileInputStream fis = new FileInputStream("states.ser");
+			ObjectInputStream ois = new ObjectInputStream(fis);
+			map = (Map<State, Long>) ois.readObject();
+			ois.close();
+			fis.close();
+		} catch (IOException | ClassNotFoundException ioe) {
+			map = new HashMap<>();
+		}
+		return map;
 	}
 }
