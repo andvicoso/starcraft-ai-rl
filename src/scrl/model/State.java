@@ -10,6 +10,7 @@ import scrl.model.range.Units;
 // representacao do estado do ambiente
 public class State implements Serializable {
 	private static final long serialVersionUID = 7588180712283449263L;
+	private long id;
 	private HP hpFromNearbyEnemies;
 	private Units numberOfEnemiesUnitsNearby;
 	private HP hpFromNearbyAllies;
@@ -21,6 +22,7 @@ public class State implements Serializable {
 		this.numberOfEnemiesUnitsNearby = numberOfEnemiesUnitsNearby;
 		this.hpFromNearbyAllies = hpFromNearbyAllies;
 		this.numberOfAlliesUnitsNearby = numberOfAlliesUnitsNearby;
+		id = hashCode();
 	}
 
 	// construtor para quando a informacao vem em valores inteiros e doubles
@@ -29,6 +31,7 @@ public class State implements Serializable {
 		this.numberOfEnemiesUnitsNearby = new Units(numberOfEnemiesUnitsNearby);
 		this.hpFromNearbyAllies = new HP(hpFromNearbyAllies);
 		this.numberOfAlliesUnitsNearby = new Units(numberOfAlliesUnitsNearby);
+		id = hashCode();
 	}
 
 	// construtor para quando a informacao vem em RANGES
@@ -37,19 +40,22 @@ public class State implements Serializable {
 		this.numberOfEnemiesUnitsNearby = new Units(numberOfEnemiesUnitsNearby);
 		this.hpFromNearbyAllies = new HP(hpFromNearbyAllies);
 		this.numberOfAlliesUnitsNearby = new Units(numberOfAlliesUnitsNearby);
+		id = hashCode();
+	}
+
+	public long getId() {
+		return id;
 	}
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("HpEnemies: ").append(hpFromNearbyEnemies).append(" N Enemies: ").append(numberOfEnemiesUnitsNearby).append(" HpAllies: ")
-				.append(hpFromNearbyAllies).append(" N Allies: ").append(numberOfAlliesUnitsNearby);
-		return builder.toString();
+		return "State [id=" + id + ", hpEnemies=" + hpFromNearbyEnemies + ", EnemiesNearby=" + numberOfEnemiesUnitsNearby + ", hpAllies=" + hpFromNearbyAllies
+				+ ", AlliesNearby=" + numberOfAlliesUnitsNearby + "]";
 	}
 
 	public Object toCSV() {
 		StringBuilder builder = new StringBuilder();
-		builder.append(hpFromNearbyEnemies).append(";").append(numberOfEnemiesUnitsNearby).append(";").append(hpFromNearbyAllies).append(";")
+		builder.append(id).append(hpFromNearbyEnemies).append(";").append(numberOfEnemiesUnitsNearby).append(";").append(hpFromNearbyAllies).append(";")
 				.append(numberOfAlliesUnitsNearby).append(";");
 		return builder.toString();
 	}

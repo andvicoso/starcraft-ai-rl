@@ -1,6 +1,8 @@
 package scrl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import bwapi.DefaultBWListener;
@@ -34,6 +36,9 @@ public class Main extends DefaultBWListener {
 	private Action currentAction = null;
 	private State currentState = null;
 	private int framesToGo;
+	private double totalReward;
+	private List<Double> rewards = new ArrayList<>(MAX_GAMES);
+
 	public static Map<State, Long> statesCounter; // variavel que armazena o estado e quantas vezes ele foi visitado
 
 	// inicializa o jogo
@@ -44,8 +49,7 @@ public class Main extends DefaultBWListener {
 
 	@Override
 	public void onStart() {
-		game = mirror.getGame(); // gives you access to players, units as well as general information about the current
-									// game
+		game = mirror.getGame(); // gives you access to players, units as well as general information about the game
 		self = game.self(); // Retrieves the player object that BWAPI is controlling.
 
 		// BWTA: A Terrain Analyzer
@@ -73,7 +77,7 @@ public class Main extends DefaultBWListener {
 			if (currentAction != null) {
 				State newState = getCurrentState(); // le o estado atual
 				// atualiza o estado, calcula a recompensa unidades "em uso"
-				rl.updateState(currentAction, currentState, newState);
+				totalReward += rl.updateState(currentAction, currentState, newState);
 			}
 
 			currentState = getCurrentState();// buscar estado atual
@@ -106,6 +110,10 @@ public class Main extends DefaultBWListener {
 		rl.end(); // serializa a tabela Q
 		match++;
 
+		log("Total Reward: " + totalReward);
+		rewards.add(totalReward);
+		totalReward = 0;
+
 		if (isWinner) { // verifica se "eu" ganhei a partida
 			inc("winCounter");
 			log("******************************WIN******************************");
@@ -118,6 +126,8 @@ public class Main extends DefaultBWListener {
 				log(counterName + ": " + counters.get(counterName));
 			}
 			Log.getInstance().endGame(statesCounter);
+			log(rewards.toString());
+
 			System.exit(0);
 		}
 	}
@@ -131,7 +141,7 @@ public class Main extends DefaultBWListener {
 		double mediumHpFromNearbyAllies = 0.d; // variavel da vida media das unidades aliada
 		int numberOfAlliesUnitsNearby = 0; // contador da quantidade de unidades aliadas proximas
 
-		for (Unit unit : game.getUnitsInRadius(LocationUtils.getCentroidAllies(self.getUnits()), 3 * RangeDistance.MARINE_ATTACK_RANGE)) {
+		for (Unit unit : game.getUnitsInRadius(LocationUtils.getCentroid(self.getUnits()), 3 * RangeDistance.MARINE_ATTACK_RANGE)) {
 			if (unit.exists()) { // checa se ela esta viva
 				if (unit.getPlayer().isAlly(self)) { // verifica se é minha aliada
 					// incrementa quantidade de unidades aliadas proximas e a vida delas

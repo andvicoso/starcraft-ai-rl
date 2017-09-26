@@ -20,23 +20,25 @@ public abstract class LocationUtils {
 		return (int) (r.nextDouble() * base * (r.nextBoolean() ? 1 : -1));
 	}
 
-	public static Position getCentroidAllies(List<Unit> we) {
-		if (we.isEmpty())
+	public static int getRandomLocationFixed(int base) {
+		return base * (r.nextBoolean() ? 1 : -1);
+	}
+
+	public static Position getCentroid(List<Unit> units) {
+		if (units.isEmpty())
 			return new Position(0, 0);
-		List<Position> pos = new ArrayList<Position>(we.size());
-		for (Unit me : we) {
+
+		List<Position> pos = new ArrayList<Position>(units.size());
+		for (Unit me : units) {
 			pos.add(me.getPosition());
 		}
 
 		int centroidX = 0, centroidY = 0;
-
 		for (Position p : pos) {
 			centroidX += p.getX();
 			centroidY += p.getY();
 		}
 
-		Position centroid = new Position(centroidX / pos.size(), centroidY / pos.size());
-
-		return centroid;
+		return new Position(centroidX / pos.size(), centroidY / pos.size());
 	}
 }

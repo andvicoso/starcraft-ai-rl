@@ -11,9 +11,11 @@ public class QLearning extends AbstractLearning {
 	public QLearning(SCMDP model) {
 		super(model);
 	}
-	// calcula valor Q 
+
+	// calcula valor Q
 	protected double computeQ(State current, State next, Action action, double reward) {
-		double oldQ = q.get(current).get(action); // Q(s,a)
+		Double oldQ = q.get(current).get(action); // Q(s,a)
+		oldQ = oldQ == null ? 0d : oldQ;
 		double bracedValue = reward + (GAMA * q.getMax(next)) - oldQ;
 		return oldQ + ALPHA * bracedValue;
 	}

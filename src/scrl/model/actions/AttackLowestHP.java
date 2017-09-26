@@ -1,7 +1,6 @@
 package scrl.model.actions;
 
 import java.util.List;
-import java.util.Objects;
 
 import bwapi.Color;
 import bwapi.Game;
@@ -17,7 +16,7 @@ public class AttackLowestHP extends Action implements java.io.Serializable {
 
 	public void execute(Game game) {
 		List<Unit> units = game.self().getUnits();
-		Position centroid = LocationUtils.getCentroidAllies(units);
+		Position centroid = LocationUtils.getCentroid(units);
 
 		Unit lowestUnit = UnitUtils.getLowestHPEnemy(game, centroid);
 
@@ -34,25 +33,9 @@ public class AttackLowestHP extends Action implements java.io.Serializable {
 		}
 	}
 
-	@Override
 	public int getNumberOfFrames(Game game) {
 		List<Unit> units = game.self().getUnits();
-		Position centroid = LocationUtils.getCentroidAllies(units);
-		return UnitUtils.getLowestHPEnemy(game, centroid) != null ? 10 : 0;//8
+		Position centroid = LocationUtils.getCentroid(units);
+		return UnitUtils.getLowestHPEnemy(game, centroid) != null ? 10 : 0;// 8
 	}
-
-	@Override
-	public boolean equals(Object other) {
-		if (other == this)
-			return true;
-		if (!(other instanceof AttackLowestHP))
-			return false;
-		return Objects.equals(this.getClass().getSimpleName(), other.getClass().getSimpleName());
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(this.getClass().getSimpleName());
-	}
-
 }

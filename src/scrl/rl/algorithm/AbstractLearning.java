@@ -27,11 +27,13 @@ public abstract class AbstractLearning implements Serializable {
 		q = new QTable(model.getStates(), model.getActions());
 	}
 
-	public void updateQ(State state, State next, Action action) {
+	public double updateQ(State state, State next, Action action) {
 		double reward = RewardFunction.getValue(state, next, action); // REcompensa da acao
 		double newQValue = computeQ(state, next, action, reward); // calcular novo valor Q
 
 		updateQTable(state, next, action, newQValue); // atualizar a tabela Q
+
+		return reward;
 	}
 
 	protected abstract double computeQ(State current, State next, Action action, double reward);

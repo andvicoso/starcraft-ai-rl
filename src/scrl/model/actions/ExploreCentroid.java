@@ -1,7 +1,6 @@
 package scrl.model.actions;
 
 import java.util.List;
-import java.util.Objects;
 
 import bwapi.Color;
 import bwapi.Game;
@@ -17,14 +16,14 @@ public class ExploreCentroid extends Action implements java.io.Serializable {
 	@Override
 	public void execute(Game game) {
 		List<Unit> units = game.self().getUnits();
-		Position centroid = LocationUtils.getCentroidAllies(units);
+		Position centroid = LocationUtils.getCentroid(units);
 		Position p = null;
 		// ir em direção dos inimigos
-		// if (game.elapsedTime() < 120) {
+		// if (game.elapsedTime() < 180) {
 		// p = new Position(centroid.getX() + 100, centroid.getY() + (centroid.getY() > 1000 ? -100 : 100));
 		// } else {
-		int vx = LocationUtils.getRandomLocation(RangeDistance.MARINE_ATTACK_RANGE * 3);
-		int vy = LocationUtils.getRandomLocation(RangeDistance.MARINE_ATTACK_RANGE * 3);
+		int vx = LocationUtils.getRandomLocationFixed(RangeDistance.MARINE_ATTACK_RANGE);
+		int vy = LocationUtils.getRandomLocationFixed(RangeDistance.MARINE_ATTACK_RANGE);
 		p = new Position(centroid.getX() + vx, centroid.getY() + vy);
 		// }
 
@@ -38,16 +37,9 @@ public class ExploreCentroid extends Action implements java.io.Serializable {
 		}
 	}
 
-	public boolean equals(Object other) {
-		if (other == this)
-			return true;
-		if (!(other instanceof ExploreCentroid))
-			return false;
-		return Objects.equals(this.getClass().getSimpleName(), other.getClass().getSimpleName());
+	@Override
+	public int getNumberOfFrames(Game game) {
+		return 15;
 	}
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(this.getClass().getSimpleName());
-	}
 }

@@ -1,10 +1,13 @@
 package scrl.model;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import scrl.model.actions.Action;
+import scrl.utils.CollectionsUtils;
 
 public class QTable extends ConcurrentHashMap<State, Map<Action, Double>> {
 
@@ -22,18 +25,12 @@ public class QTable extends ConcurrentHashMap<State, Map<Action, Double>> {
 	}
 
 	// recupera qual a melhor acao na tabela para um dado estado
-	public Action getMaxAction(State pState) {
-		Map<Action, Double> map = this.get(pState);
-		double max = Double.NEGATIVE_INFINITY;
-		Action ret = null;
-		for (Action act : map.keySet()) {
-			if (map.get(act) > max) {
-				max = map.get(act);
-				ret = act;
-			}
-		}
-		return ret;
+	public Set<Action> getMaxActions(State state) {
+		Map<Action, Double> map = this.get(state);
+		double max = Collections.max(map.values());
+		return CollectionsUtils.getKeysForValue(map, max);
 	}
+
 	// recupera qual o maior valor na tabela para um dado estado
 	public double getMax(State pState) {
 		Map<Action, Double> map = this.get(pState);
@@ -51,8 +48,8 @@ public class QTable extends ConcurrentHashMap<State, Map<Action, Double>> {
 	public Policy getPolicy() {
 		Policy p = new Policy();
 		for (State state : keySet()) {
-			Action bestAction = getMaxAction(state);
-			StateAction policyData = new StateAction(state, bestAction);
+			Set<Action> bestActions = getMaxActions(state);
+			StateAction policyData = new StateAction(state, bestActions);
 			p.add(policyData);
 		}
 		return p;
@@ -70,7 +67,7 @@ public class QTable extends ConcurrentHashMap<State, Map<Action, Double>> {
 				builder.append(state.toCSV());
 				builder.append(" =  Explore: " + vet.toArray()[0]);
 				builder.append(" - Flee: " + vet.toArray()[1]);
-				builder.append(" - Atack: " + vet.toArray()[2]);
+				builder.append(" - Attack: " + vet.toArray()[2]);
 				builder.append("\n");
 			}
 		}

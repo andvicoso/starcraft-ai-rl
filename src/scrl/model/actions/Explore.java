@@ -1,7 +1,6 @@
 package scrl.model.actions;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 
 import bwapi.Game;
@@ -151,16 +150,7 @@ public class Explore extends Action implements java.io.Serializable {
 	}
 
 	@Override
-	public boolean equals(Object other) {
-		if (other == this)
-			return true;
-		if (!(other instanceof Explore))
-			return false;
-		return Objects.equals(this.getClass().getSimpleName(), other.getClass().getSimpleName());
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(this.getClass().getSimpleName());
+	public int getNumberOfFrames(Game game) {
+		return 15;
 	}
 }

@@ -3,7 +3,6 @@ package scrl.model.actions;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 
 import bwapi.Game;
 import bwapi.Unit;
@@ -21,7 +20,7 @@ public class Attack extends Action implements java.io.Serializable {
 				if (unit.exists() && unit.getPlayer().isEnemy(me.getPlayer())) {
 					// relaciona as unidades inimigas em uma listaLigada,
 					// Insere informações como:
-					// unidade esta em alcance de atack direto?
+					// unidade esta em alcance de attack direto?
 					// quantidade de HP da unidade
 					// distancia entre a unidade
 					tuples.add(new Tuple(unit, me.isInWeaponRange(unit), unit.getHitPoints(), me.getDistance(unit)));
@@ -39,17 +38,8 @@ public class Attack extends Action implements java.io.Serializable {
 	}
 
 	@Override
-	public boolean equals(Object other) {
-		if (other == this)
-			return true;
-		if (!(other instanceof Attack))
-			return false;
-		return Objects.equals(this.getClass().getSimpleName(), other.getClass().getSimpleName());
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(this.getClass().getSimpleName());
+	public int getNumberOfFrames(Game game) {
+		return 10;
 	}
 
 	class Tuple implements Comparable<Tuple> {

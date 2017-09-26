@@ -15,11 +15,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import scrl.model.Policy;
 import scrl.model.QTable;
 import scrl.model.SCMDP;
 import scrl.model.State;
 import scrl.model.StateAction;
-import scrl.model.actions.Action;
 
 public abstract class FileUtils {
 
@@ -61,17 +61,16 @@ public abstract class FileUtils {
 
 	public static void policyToFile() {
 		List<StateAction> policyDataList = new ArrayList<>();
-		QTable qT;
+		QTable q;
 		try {
 			FileInputStream fis = new FileInputStream("marineTable.ser");
 			ObjectInputStream ois = new ObjectInputStream(fis);
-			qT = (QTable) ois.readObject();
-			for (State state : qT.keySet()) {
-				Action bestAction = qT.getMaxAction(state);
-				StateAction policyData = new StateAction(state, bestAction);
-				policyDataList.add(policyData);
-				ois.close();
+			q = (QTable) ois.readObject();
+			Policy p = q.getPolicy();
+			for (StateAction stateAction : p) {
+				policyDataList.add(stateAction);
 			}
+			ois.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -79,7 +78,7 @@ public abstract class FileUtils {
 		try {
 			PrintWriter qwriter = new PrintWriter("policy.txt", "UTF-8");
 			for (StateAction stateAction : policyDataList) {
-				qwriter.println(stateAction.getState().toCSV() + " : " + stateAction.getAction().getClass().getSimpleName());
+				qwriter.println(stateAction.getState().toCSV() + " : " + stateAction.getActions().getClass().getSimpleName());
 			}
 			qwriter.close();
 		} catch (IOException e) {
